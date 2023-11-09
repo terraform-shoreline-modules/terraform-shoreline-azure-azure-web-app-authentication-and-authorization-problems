@@ -1,0 +1,130 @@
+{
+  "name": "azure_web_app_authentication_and_authorization_problems",
+  "description": "This incident type refers to issues related to user authentication and authorization in an Azure web application. This can happen due to incorrect configuration of authentication and authorization settings, such as identity provider settings, application roles, and access control. Resolving this incident requires verifying and correcting these settings to ensure proper user authentication and authorization in the application.",
+  "params": [
+    {
+      "name": "APPLICATION_ID",
+      "value": ""
+    },
+    {
+      "name": "TOKEN_ISSUER_URL",
+      "value": ""
+    },
+    {
+      "name": "CLIENT_SECRET",
+      "value": ""
+    },
+    {
+      "name": "SUBSCRIPTION_ID",
+      "value": ""
+    },
+    {
+      "name": "TOKEN_AUDIENCE_URL",
+      "value": ""
+    },
+    {
+      "name": "RESOURCE_GROUP_NAME",
+      "value": ""
+    },
+    {
+      "name": "WEBAPP_NAME",
+      "value": ""
+    },
+    {
+      "name": "CLIENT_ID",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Azure Web App Authentication and Authorization Problems\nThis incident type refers to issues related to user authentication and authorization in an Azure web application. This can happen due to incorrect configuration of authentication and authorization settings, such as identity provider settings, application roles, and access control. Resolving this incident requires verifying and correcting these settings to ensure proper user authentication and authorization in the application."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the web app is running"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp show --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} --query \"state\"`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if authentication and authorization is enabled for the web app"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp auth show --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} --query \"enabled\"`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the identity provider is correctly configured"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp identity show --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME}`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the application roles are correctly configured"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az ad app show --id ${APPLICATION_ID}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if access control is correctly configured"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az role assignment list --assignee ${APPLICATION_ID} --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP_NAME}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check and update the authentication and authorization settings in the Azure web application and verify that they are correctly configured."
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_webapp_auth_setup($TOKEN_ISSUER_URL, $CLIENT_SECRET, $TOKEN_AUDIENCE_URL, $RESOURCE_GROUP_NAME, $WEBAPP_NAME, $CLIENT_ID)"
+    }
+  ]
+}
